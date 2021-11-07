@@ -17,9 +17,13 @@ import 'react-calendar/dist/Calendar.css';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 
-const Hello = () => {
+import {CalendarEvent} from './Components'
+
+const Dashboard = () => {
   const [appleData, setAppleData] = useState({});
   const [time, setTime] = useState(new Date());
+
+  const filteredRemindersLists = ['Reminders', 'Jobs'];
 
   const { data, isLoading, errorMessage } = useOpenWeather({
     key: process.env.ELECTRON_APP_WEATHER_API_KEY,
@@ -77,11 +81,9 @@ const Hello = () => {
           <Calendar />
           {appleData.calendar &&
             Object.keys(appleData.calendar).map((cal, i) => (
-              <Fragment key={i}>
-                {appleData.calendar[cal].map((event, e) => (
-                  <p key={e}>{event}</p>
-                ))}
-              </Fragment>
+                appleData.calendar[cal].map((event, e) => (
+                  <CalendarEvent {...{calendar:cal, key:e, event}}/>
+                ))
             ))}
         </div>
       </div>
@@ -130,13 +132,47 @@ const Hello = () => {
         </div>
       </div>
       <div className="g-c3">
-        <div className="container-item">
-          <h1>Reminders</h1>
-          {appleData.reminders &&
-            appleData.reminders.Jobs.filter((r) => !r.completed).map(
-              (item, i) => <p key={i}>{item.name}</p>
-            )}
-        </div>
+        {appleData.reminders &&
+          Object.keys(appleData.reminders)
+            .filter((f) => filteredRemindersLists.includes(f))
+            .map((list, l) => (
+              <div
+                className="container-item"
+                key={l}
+                style={{ display: 'flex', width: 400 }}
+              >
+                <div
+                  style={{
+                    width: '35%',
+                    display: 'inline-block',
+                    position: 'relative',
+                  }}
+                >
+                  <div
+                    style={{
+                      position: 'absolute',
+                      bottom: 0,
+                      textAlign: 'center',
+                    }}
+                  >
+                    <b>
+                      {
+                        appleData.reminders[list].filter((r) => !r.completed)
+                          .length
+                      }
+                    </b>
+                    <h2>{list}</h2>
+                  </div>
+                </div>
+                <div style={{ width: '55%', display: 'inline-block' }}>
+                  {appleData.reminders[list]
+                    .filter((r) => !r.completed)
+                    .map((item, i) => (
+                      <p key={i}>{item.name}</p>
+                    ))}
+                </div>
+              </div>
+            ))}
         <div className="container-item">
           <h1>Notes</h1>
           {appleData.notes &&
@@ -153,7 +189,7 @@ export default function App() {
   return (
     <Router>
       <Switch>
-        <Route path="/" component={Hello} />
+        <Route path="/" component={Dashboard} />
       </Switch>
     </Router>
   );

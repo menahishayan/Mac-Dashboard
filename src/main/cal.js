@@ -28,7 +28,7 @@ exports.calendar = () => {
         var convertedEvents = events();
         var summary = [];
         for (var cal of convertedEvents) {
-          summary.push(cal.summary());
+          summary.push(cal.properties());
         }
         allCalendarItems[calendarApp.calendars[i].name()] = summary;
       }

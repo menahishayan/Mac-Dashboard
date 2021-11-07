@@ -36,7 +36,7 @@ h1 {
 }
 
 .home-button {
-  padding: 30px;
+  padding: 20px;
   background-color: white;
   color:dodgerblue;
   margin:5px;
@@ -47,4 +47,5 @@ h1 {
   box-shadow: 2px 3px 7px 0px rgba(0,0,0,0.26);
   font-weight: bold;
   font-size: 16px;
+  display: inline-block;
 }
