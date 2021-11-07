@@ -3,48 +3,34 @@ body {
   background-color: rgb(0, 0, 0);
 }
 
+h1 {
+  margin: 0;
+}
+
 .main-container {
   display: inline-grid;
-  grid-gap: 20px;
 }
-
-.g-weather {
-  grid-column-start: 2;
-  grid-column-end: 5;
-  grid-row-start: 1;
-  grid-row-end: 1;
-}
-
-.g-weather {
-  grid-column-start: 2;
-  grid-column-end: 7;
-  grid-row-start: 2;
-  grid-row-end: 2;
-}
-
-.g-cal {
+.g-c1 {
   grid-column-start: 1;
   grid-column-end: 1;
-  grid-row-start: 2;
-  grid-row-end: 3;
 }
-
-.g-reminders {
-  grid-column-start: 8;
-  grid-column-end: 12;
-  grid-row-start: 1;
-  grid-row-end: 2;
+.g-c2 {
+  grid-column-start: 2;
+  grid-column-end: 2;
 }
-
-.g-notes {
-  grid-column-start: 8;
-  grid-column-end: 12;
-  grid-row-start: 3;
-  grid-row-end: 5;
+.g-c3 {
+  grid-column-start: 3;
+  grid-column-end: 3;
 }
 
 .container-item {
   background-color: white;
-  border-radius: 15px;
-  padding: 20px;
+  border-radius: 20px;
+  padding: 30px;
+  margin: 25px 15px;
+}
+
+.clock-container {
+  height: 150px;
+  width: 150px;
 }

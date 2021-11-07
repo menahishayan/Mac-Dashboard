@@ -46,45 +46,49 @@ const Hello = () => {
 
   return (
     <div className="main-container">
-      <div className="g-reminders container-item">
-        <h1>Reminders</h1>
-        {appleData.reminders &&
-          appleData.reminders.map((item, i) => <p key={i}>{item.name}</p>)}
+      <div className="g-c1">
+        <div className="container-item">
+          <h1>Calendar</h1>
+          <Calendar />
+          {appleData.calendar &&
+            appleData.calendar.map((item, i) => <p key={i}>{item}</p>)}
+        </div>
       </div>
-
-      <div className="g-notes container-item">
-        <h1>Notes</h1>
-        {appleData.notes &&
-          appleData.notes
-            .slice(0, 3)
-            .map((item, i) => <p key={i}>{item.name}</p>)}
+      <div className="g-c2">
+        <div className="container-item" >
+          <div className="clock-container">
+            <CircularProgressbar
+              maxValue={1}
+              value={time.getMinutes() / 60}
+              text={time.getHours() % 12}
+            />
+          </div>
+        </div>
+        <div className="container-item">
+          <ReactWeather
+            isLoading={isLoading}
+            errorMessage={errorMessage}
+            data={data}
+            lang="en"
+            locationLabel="Home"
+            unitsLabels={{ temperature: '\u00b0C', windSpeed: 'Km/h' }}
+            showForecast
+          />
+        </div>
       </div>
-
-      <div className="g-cal container-item">
-        <h1>Calendar</h1>
-        <Calendar />
-        {appleData.calendar &&
-          appleData.calendar.map((item, i) => <p key={i}>{item}</p>)}
-      </div>
-
-      <div className="g-clock container-item">
-        <CircularProgressbar
-          maxValue={1}
-          value={time.getMinutes() / 60}
-          text={time.getHours() % 12}
-        />
-      </div>
-
-      <div className="g-weather container-item">
-        <ReactWeather
-          isLoading={isLoading}
-          errorMessage={errorMessage}
-          data={data}
-          lang="en"
-          locationLabel="Home"
-          unitsLabels={{ temperature: '\u00b0C', windSpeed: 'Km/h' }}
-          showForecast
-        />
+      <div className="g-c3">
+        <div className="container-item">
+          <h1>Reminders</h1>
+          {appleData.reminders &&
+            appleData.reminders.map((item, i) => <p key={i}>{item.name}</p>)}
+        </div>
+        <div className="container-item">
+          <h1>Notes</h1>
+          {appleData.notes &&
+            appleData.notes
+              .slice(0, 3)
+              .map((item, i) => <p key={i}>{item.name}</p>)}
+        </div>
       </div>
     </div>
   );
