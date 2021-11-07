@@ -9,14 +9,9 @@ import { resolveHtmlPath } from './util';
 
 const {calendar} = require('./cal.js')
 const {reminders} = require('./rem.js')
+const {notes} = require('./notes.js')
 
 let mainWindow: BrowserWindow | null = null;
-
-// ipcMain.on('ipc-example', async (event, arg) => {
-//   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-//   console.log(msgTemplate(arg));
-//   event.reply('ipc-example', msgTemplate('pong'));
-// });
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -78,6 +73,7 @@ const createWindow = async () => {
       mainWindow.minimize();
     } else {
       mainWindow.show();
+        mainWindow.webContents.send('jxa-notes', await notes());
         mainWindow.webContents.send('jxa-cal', await calendar());
         mainWindow.webContents.send('jxa-rem', await reminders());
     }
