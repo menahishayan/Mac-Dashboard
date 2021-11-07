@@ -3,14 +3,14 @@ window.require('dotenv').config();
 
 import { MemoryRouter as Router, Switch, Route } from 'react-router-dom';
 import './App.css';
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import ReactWeather, { useOpenWeather } from 'react-open-weather';
 import {
   createConnection,
   subscribeEntities,
   createLongLivedTokenAuth,
   Connection,
-  callService
+  callService,
 } from 'home-assistant-js-websocket';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
@@ -60,7 +60,9 @@ const Hello = () => {
       let tempConnection = await createConnection({ auth });
       setConnection(tempConnection);
       subscribeEntities(tempConnection, (entities) => {
-        let filteredEntities = Object.keys(entities).filter(e => ['switch','light'].includes(e.split('.')[0])).map(e => entities[e])
+        let filteredEntities = Object.keys(entities)
+          .filter((e) => ['switch', 'light'].includes(e.split('.')[0]))
+          .map((e) => entities[e]);
         setHomeData(filteredEntities);
       });
     };
@@ -74,7 +76,13 @@ const Hello = () => {
           <h1>Calendar</h1>
           <Calendar />
           {appleData.calendar &&
-            appleData.calendar.map((item, i) => <p key={i}>{item}</p>)}
+            Object.keys(appleData.calendar).map((cal, i) => (
+              <Fragment key={i}>
+                {appleData.calendar[cal].map((event, e) => (
+                  <p key={e}>{event}</p>
+                ))}
+              </Fragment>
+            ))}
         </div>
       </div>
       <div className="g-c2">
@@ -100,29 +108,41 @@ const Hello = () => {
         </div>
         <div className="container-item">
           <h1>Home</h1>
-          {homeData && homeData.map(h =>
-          <button onClick={() => callService(connection, "homeassistant", "toggle", {
-            entity_id: h.entity_id,
-          })}>
-            {h.entity_id.split('.')[1]}
-          </button>
-          )
-
-          }
+          {homeData &&
+            homeData.map((h, k) => (
+              <button
+                key={k}
+                className="home-button"
+                style={
+                  h.state === 'on'
+                    ? { backgroundColor: 'dodgerblue', color: 'white' }
+                    : {}
+                }
+                onClick={() =>
+                  callService(connection, 'homeassistant', 'toggle', {
+                    entity_id: h.entity_id,
+                  })
+                }
+              >
+                {h.attributes.friendly_name}
+              </button>
+            ))}
         </div>
       </div>
       <div className="g-c3">
         <div className="container-item">
           <h1>Reminders</h1>
           {appleData.reminders &&
-            appleData.reminders.map((item, i) => <p key={i}>{item.name}</p>)}
+            appleData.reminders.Jobs.filter((r) => !r.completed).map(
+              (item, i) => <p key={i}>{item.name}</p>
+            )}
         </div>
         <div className="container-item">
           <h1>Notes</h1>
           {appleData.notes &&
-            appleData.notes
-              .slice(0, 3)
-              .map((item, i) => <p key={i}>{item.name}</p>)}
+            appleData.notes.Notes.slice(0, 3).map((item, i) => (
+              <p key={i}>{item.name}</p>
+            ))}
         </div>
       </div>
     </div>

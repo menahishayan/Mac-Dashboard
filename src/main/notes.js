@@ -9,31 +9,32 @@ exports.notes = () => {
         name: list.name(),
         id: list.id(),
       }));
-      const list = notesApp.folders.byId(lists[0].id).notes;
-      //   const props = args.props || [ 'name', 'body', 'id', 'completed', 'completionDate', 'creationDate', 'dueDate', 'modificationDate', 'remindMeDate', 'priority' ];
-      const props = ['name'];
-      // We could traverse all reminders and for each one get the all the props.
-      // This is more inefficient than calling '.name()' on the very reminder list. It requires
-      // less function calls.
-      const propFns = props.reduce((obj, prop) => {
-        obj[prop] = list[prop]();
-        return obj;
-      }, {});
-      const finalList = [];
 
-      // Flatten the object {name: string[], id: string[]} to an array of form
-      // [{name: string, id: string}, ..., {name: string, id: string}] which represents the list
-      // of reminders
-      for (let i = 0; i < propFns.name.length; i++) {
-        const reminder = props.reduce((obj, prop) => {
-          obj[prop] = propFns[prop][i];
+      // if (args.list) lists = lists.filter((f) => args.list.includes(f.name));
+
+      const allNotesList = {};
+      lists.forEach((l) => {
+        const list = notesApp.folders.byId(l.id).notes;
+        const props = args.props || ['name'];
+
+        const propFns = props.reduce((obj, prop) => {
+          obj[prop] = list[prop]();
           return obj;
         }, {});
-        finalList.push(reminder);
-      }
-      return finalList;
+        const finalList = [];
+
+        for (let i = 0; i < propFns.name.length; i++) {
+          const note = props.reduce((obj, prop) => {
+            obj[prop] = propFns[prop][i];
+            return obj;
+          }, {});
+          finalList.push(note);
+        }
+        allNotesList[l.name] = finalList;
+      });
+      return allNotesList;
     } catch (e) {
-      console.log('notes: ', e);
+      console.log('Notes', e);
       return [];
     }
   });

@@ -65,7 +65,7 @@ const createWindow = async () => {
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
-  mainWindow.on('ready-to-show', async() => {
+  mainWindow.on('ready-to-show', async () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
@@ -73,9 +73,9 @@ const createWindow = async () => {
       mainWindow.minimize();
     } else {
       mainWindow.show();
-      mainWindow.webContents.send('jxa-data', {notes:await notes()})
-      mainWindow.webContents.send('jxa-data', {reminders:await reminders()})
-      mainWindow.webContents.send('jxa-data', {calendar:await calendar()})
+      mainWindow.webContents.send('jxa-data', { calendar: await calendar() }); //{list: ['Workouts']}
+      mainWindow.webContents.send('jxa-data', { notes: await notes() });
+      mainWindow.webContents.send('jxa-data', { reminders: await reminders() });
     }
   });
 

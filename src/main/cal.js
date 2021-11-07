@@ -5,38 +5,36 @@ exports.calendar = () => {
   return run(() => {
     try {
       var calendarApp = Application('Calendar');
+      var startDate = new Date();
       var endDate = new Date();
-      var startDate = new Date(endDate);
-      startDate.setDate(startDate.getDate() - 10);
+      endDate.setDate(startDate.getDate() + 2);
 
-      var calendarName = 'Calendar';
-      var currentCalendar = calendarApp.calendars.whose({ name: calendarName })[0];
-      try {
+      const allCalendarItems = {};
+
+      for (let i in [...Array(calendarApp.calendars.length).keys()]) {
+        var currentCalendar = calendarApp.calendars[i];
+        try {
           currentCalendar.get();
-      } catch (e) {
-          console.log('Could not find calendar ' + calendarName );
+        } catch (e) {
+          console.log('Could not find calendar ' + calendarName);
           return [];
+        }
+        var events = currentCalendar.events.whose({
+          _and: [
+            { startDate: { _greaterThan: startDate } },
+            { endDate: { _lessThan: endDate } },
+          ],
+        });
+        var convertedEvents = events();
+        var summary = [];
+        for (var cal of convertedEvents) {
+          summary.push(cal.summary());
+        }
+        allCalendarItems[calendarApp.calendars[i].name()] = summary;
       }
-
-      // for(let i in [...Array(calendarApp.calendars.length).keys()]) {
-      //     console.log(calendarApp.calendars[i].name())
-      // }
-      var events = currentCalendar.events.whose({
-        _and: [
-          { startDate: { _greaterThan: startDate } },
-          { endDate: { _lessThan: endDate } },
-        ],
-      });
-      var convertedEvents = events();
-      var summary = [];
-      for (var cal of convertedEvents) {
-        // for (var ev of cal) {
-        summary.push(cal.summary());
-        // }
-      }
-      return summary;
+      return allCalendarItems;
     } catch (e) {
-      console.log('calendar: ', e);
+      console.log('Calendar', e);
       return [];
     }
   });
