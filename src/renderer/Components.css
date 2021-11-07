@@ -7,12 +7,29 @@
 }
 
 .calendar-event-title {
-  color:rgb(255, 46, 81);
+  color: rgb(255, 46, 81);
   font-weight: 600;
   font-size: 16px;
 }
 
 .calendar-event-date {
-  color:rgb(255, 46, 81);
+  color: rgb(255, 46, 81);
   font-size: 14px;
 }
+
+.list-container {
+  display: flex;
+}
+
+.list-container .left-item {
+  width: 35%;
+  display: inline-block;
+  position: relative;
+  text-align: center;
+}
+
+.list-container  .right-item {
+  width: 55%;
+  display: inline-block;
+}
+

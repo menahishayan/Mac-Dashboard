@@ -17,7 +17,7 @@ import 'react-calendar/dist/Calendar.css';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 
-import {CalendarEvent} from './Components'
+import {CalendarEvent, ListContainer} from './Components'
 
 const Dashboard = () => {
   const [appleData, setAppleData] = useState({});
@@ -136,42 +136,7 @@ const Dashboard = () => {
           Object.keys(appleData.reminders)
             .filter((f) => filteredRemindersLists.includes(f))
             .map((list, l) => (
-              <div
-                className="container-item"
-                key={l}
-                style={{ display: 'flex', width: 400 }}
-              >
-                <div
-                  style={{
-                    width: '35%',
-                    display: 'inline-block',
-                    position: 'relative',
-                  }}
-                >
-                  <div
-                    style={{
-                      position: 'absolute',
-                      bottom: 0,
-                      textAlign: 'center',
-                    }}
-                  >
-                    <b>
-                      {
-                        appleData.reminders[list].filter((r) => !r.completed)
-                          .length
-                      }
-                    </b>
-                    <h2>{list}</h2>
-                  </div>
-                </div>
-                <div style={{ width: '55%', display: 'inline-block' }}>
-                  {appleData.reminders[list]
-                    .filter((r) => !r.completed)
-                    .map((item, i) => (
-                      <p key={i}>{item.name}</p>
-                    ))}
-                </div>
-              </div>
+              <ListContainer {...{key: l, title:list, items:appleData.reminders[list]}}/>
             ))}
         <div className="container-item">
           <h1>Notes</h1>

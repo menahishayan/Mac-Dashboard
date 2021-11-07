@@ -18,3 +18,21 @@ export const CalendarEvent = (props) => (
     </span>
   </div>
 );
+
+export const ListContainer = (props) => (
+  <div className="container-item list-container" key={props.key} style={{width:400}}>
+    <div className="left-item">
+      <div style={{ position: 'absolute', bottom: 0 }}>
+        <b>{props.items.filter((r) => !r.completed).length}</b>
+        <h2>{props.title}</h2>
+      </div>
+    </div>
+    <div className="right-item">
+      {props.items
+        .filter((r) => !r.completed)
+        .map((item, i) => (
+          <p key={i}>{item.name}</p>
+        ))}
+    </div>
+  </div>
+);
