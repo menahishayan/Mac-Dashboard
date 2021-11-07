@@ -1,17 +1,21 @@
+const { ipcRenderer } = window.require('electron');
+window.require('dotenv').config();
+
 import { MemoryRouter as Router, Switch, Route } from 'react-router-dom';
 import './App.css';
 import { useEffect, useState } from 'react';
-const { ipcRenderer } = window.require('electron');
-
 import ReactWeather, { useOpenWeather } from 'react-open-weather';
-
+import {
+  createConnection,
+  subscribeEntities,
+  createLongLivedTokenAuth,
+  Connection,
+  callService
+} from 'home-assistant-js-websocket';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
-
-window.require('dotenv').config();
 
 const Hello = () => {
   const [appleData, setAppleData] = useState({});
@@ -44,6 +48,25 @@ const Hello = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const [homeData, setHomeData] = useState();
+  const [connection, setConnection] = useState();
+
+  useEffect(() => {
+    const loadData = async () => {
+      const auth = createLongLivedTokenAuth(
+        'http://home.local:8123',
+        process.env.REACT_APP_ACCESS_TOKEN
+      );
+      let tempConnection = await createConnection({ auth });
+      setConnection(tempConnection);
+      subscribeEntities(tempConnection, (entities) => {
+        let filteredEntities = Object.keys(entities).filter(e => ['switch','light'].includes(e.split('.')[0])).map(e => entities[e])
+        setHomeData(filteredEntities);
+      });
+    };
+    loadData();
+  }, []);
+
   return (
     <div className="main-container">
       <div className="g-c1">
@@ -55,7 +78,7 @@ const Hello = () => {
         </div>
       </div>
       <div className="g-c2">
-        <div className="container-item" >
+        <div className="container-item">
           <div className="clock-container">
             <CircularProgressbar
               maxValue={1}
@@ -74,6 +97,18 @@ const Hello = () => {
             unitsLabels={{ temperature: '\u00b0C', windSpeed: 'Km/h' }}
             showForecast
           />
+        </div>
+        <div className="container-item">
+          <h1>Home</h1>
+          {homeData && homeData.map(h =>
+          <button onClick={() => callService(connection, "homeassistant", "toggle", {
+            entity_id: h.entity_id,
+          })}>
+            {h.entity_id.split('.')[1]}
+          </button>
+          )
+
+          }
         </div>
       </div>
       <div className="g-c3">
