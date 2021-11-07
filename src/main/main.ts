@@ -7,9 +7,9 @@ import { app, BrowserWindow, shell } from 'electron';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 
-const {calendar} = require('./cal.js')
-const {reminders} = require('./rem.js')
-const {notes} = require('./notes.js')
+const { calendar } = require('./cal.js');
+const { reminders } = require('./rem.js');
+const { notes } = require('./notes.js');
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -53,13 +53,13 @@ const createWindow = async () => {
 
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1024,
-    height: 728,
+    width: 1366,
+    height: 900,
     icon: getAssetPath('icon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: true,
-  contextIsolation: false,
+      contextIsolation: false,
     },
   });
 
@@ -73,12 +73,11 @@ const createWindow = async () => {
       mainWindow.minimize();
     } else {
       mainWindow.show();
-        mainWindow.webContents.send('jxa-notes', await notes());
-        mainWindow.webContents.send('jxa-cal', await calendar());
-        mainWindow.webContents.send('jxa-rem', await reminders());
+      mainWindow.webContents.send('jxa-data', {notes:await notes()})
+      mainWindow.webContents.send('jxa-data', {reminders:await reminders()})
+      mainWindow.webContents.send('jxa-data', {calendar:await calendar()})
     }
   });
-
 
   mainWindow.on('closed', () => {
     mainWindow = null;
@@ -93,10 +92,9 @@ const createWindow = async () => {
   });
 };
 
-
 app.on('window-all-closed', () => {
   // if (process.platform !== 'darwin') {
-    app.quit();
+  app.quit();
   // }
 });
 
